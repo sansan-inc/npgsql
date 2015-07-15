@@ -21,7 +21,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityFramework5.Npgsql", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Npgsql.Tests", "test\Npgsql.Tests\Npgsql.Tests.csproj", "{E9C258D7-0D8E-4E6A-9857-5C6438591755}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpgsqlDdexProvider2013", "src\NpgsqlDdexProvider\NpgsqlDdexProvider2013.csproj", "{249C6185-C3B5-4D28-A508-ABD975702A0B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpgsqlDdexProvider2015", "src\NpgsqlDdexProvider2015\NpgsqlDdexProvider2015.csproj", "{249C6185-C3B5-4D28-A508-ABD975702A0B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9D13B739-62B1-4190-B386-7A9547304EB3} = {9D13B739-62B1-4190-B386-7A9547304EB3}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityFramework6.Npgsql.Tests", "test\EntityFramework6.Npgsql.Tests\EntityFramework6.Npgsql.Tests.csproj", "{4A0A42DE-C8B8-11E4-8EC9-005056A163A4}"
 EndProject
