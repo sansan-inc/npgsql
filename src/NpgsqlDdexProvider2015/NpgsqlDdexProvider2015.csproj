@@ -201,7 +201,7 @@
       </Code>
     </Task>
   </UsingTask>
-  <Target Name="SetVsSDKEnvironmentVariables" BeforeTargets="GeneratePkgDef">
+  <Target Name="SetVsSDKEnvironmentVariables" BeforeTargets="VSCTCompile">
     <SetVsSDKEnvironmentVariables ProjectDirectory="$(MSBuildProjectDirectory)" />
   </Target>
   <Import Project="..\..\packages\Microsoft.VisualStudio.SDK.VsixSuppression.14.0.50420-pre\build\Microsoft.VisualStudio.SDK.VsixSuppression.targets" Condition="Exists('..\..\packages\Microsoft.VisualStudio.SDK.VsixSuppression.14.0.50420-pre\build\Microsoft.VisualStudio.SDK.VsixSuppression.targets')" />
