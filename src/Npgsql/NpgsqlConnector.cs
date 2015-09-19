@@ -1416,29 +1416,47 @@ namespace Npgsql
         void Cleanup()
         {
             Log.Trace("Cleanup connector", Id);
-            try { if (_stream != null) _stream.Dispose(); } catch {
-                // ignored
-            }
-
-            if (CurrentReader != null) {
-                CurrentReader.Command.State = CommandState.Idle;
-                try { CurrentReader.Close(); } catch {
+            try
+            {
+                try
+                {
+                    if (_stream != null) _stream.Dispose();
+                }
+                catch
+                {
                     // ignored
                 }
-                CurrentReader = null;
-            }
 
-            ClearTransaction();
-            _stream = null;
-            _baseStream = null;
-            Buffer = null;
-            Connection = null;
-            BackendParams.Clear();
-            ServerVersion = null;
-            _userLock.Dispose();
-            _userLock = null;
-            _asyncLock.Dispose();
-            _asyncLock = null;
+                if (CurrentReader != null)
+                {
+                    CurrentReader.Command.State = CommandState.Idle;
+                    try
+                    {
+                        CurrentReader.Close();
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+                    CurrentReader = null;
+                }
+
+                ClearTransaction();
+                _stream = null;
+                _baseStream = null;
+                Buffer = null;
+                Connection = null;
+                BackendParams.Clear();
+                ServerVersion = null;
+                _userLock.Dispose();
+                _userLock = null;
+                _asyncLock.Dispose();
+                _asyncLock = null;
+            }
+            catch (Exception e)
+            {
+                Log.Error("Exception during cleanup", e, Id);
+            }
         }
 
         /// <summary>
