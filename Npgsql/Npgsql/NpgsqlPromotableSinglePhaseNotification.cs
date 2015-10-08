@@ -36,6 +36,7 @@ namespace Npgsql
         private NpgsqlTransactionCallbacks _callbacks;
         private INpgsqlResourceManager _rm;
         private bool _inTransaction;
+        private Transaction _enlistedTransaction;
         internal bool InLocalTransaction { get { return _npgsqlTx != null;  } }
 
         private static readonly String CLASSNAME = MethodBase.GetCurrentMethod().DeclaringType.Name;
@@ -48,24 +49,33 @@ namespace Npgsql
         public void Enlist(Transaction tx)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Enlist");
-            if (tx != null)
+            if (tx == null)
+                return;
+
+            if (_enlistedTransaction != null)
             {
-                _isolationLevel = tx.IsolationLevel;
-                if (!tx.EnlistPromotableSinglePhase(this))
-                {
-                    // must already have a durable resource
-                    // start transaction
-                    _npgsqlTx = _connection.BeginTransaction(ConvertIsolationLevel(_isolationLevel));
-                    _inTransaction = true;
-                    _rm = CreateResourceManager();
-                    _callbacks = new NpgsqlTransactionCallbacks(_connection);
-                    _rm.Enlist(_callbacks, TransactionInterop.GetTransmitterPropagationToken(tx));
-                    // enlisted in distributed transaction
-                    // disconnect and cleanup local transaction
-                    _npgsqlTx.Cancel();
-                    _npgsqlTx.Dispose();
-                    _npgsqlTx = null;
-                }
+                if (tx == _enlistedTransaction)
+                    return;
+                if (_enlistedTransaction.TransactionInformation.Status == TransactionStatus.Active)
+                    throw new InvalidOperationException(NpgsqlConnection.resman.GetString("Exception_NoNestedTransactions"));
+            }
+
+            _enlistedTransaction = tx;
+            _isolationLevel = tx.IsolationLevel;
+            if (!tx.EnlistPromotableSinglePhase(this))
+            {
+                // must already have a durable resource
+                // start transaction
+                _npgsqlTx = _connection.BeginTransaction(ConvertIsolationLevel(_isolationLevel));
+                _inTransaction = true;
+                _rm = CreateResourceManager();
+                _callbacks = new NpgsqlTransactionCallbacks(_connection);
+                _rm.Enlist(_callbacks, TransactionInterop.GetTransmitterPropagationToken(tx));
+                // enlisted in distributed transaction
+                // disconnect and cleanup local transaction
+                _npgsqlTx.Cancel();
+                _npgsqlTx.Dispose();
+                _npgsqlTx = null;
             }
         }
 
