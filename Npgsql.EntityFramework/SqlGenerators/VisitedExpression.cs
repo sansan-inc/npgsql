@@ -98,6 +98,7 @@ namespace Npgsql.SqlGenerators
     {
         private PrimitiveTypeKind _primitiveType;
         private object _value;
+        private readonly TypeUsage _edmType;
 
         public ConstantExpression(object value, TypeUsage edmType)
         {
@@ -107,6 +108,7 @@ namespace Npgsql.SqlGenerators
                 throw new ArgumentException("Require primitive EdmType", "edmType");
             _primitiveType = ((PrimitiveType)edmType.EdmType).PrimitiveTypeKind;
             _value = value;
+            _edmType = edmType;
         }
 
         internal override void WriteSql(StringBuilder sqlText)
@@ -114,6 +116,14 @@ namespace Npgsql.SqlGenerators
             NpgsqlNativeTypeInfo typeInfo;
             System.Globalization.NumberFormatInfo ni = NpgsqlNativeTypeInfo.NumberFormat;
             object value = _value;
+
+            if (_edmType.IsBit())
+            {
+                sqlText.AppendFormat("({0})::{1}", value, _edmType.GetBitStoreTypeString());
+                base.WriteSql(sqlText);
+                return;
+            }
+
             switch (_primitiveType)
             {
                 case PrimitiveTypeKind.Binary:
@@ -1084,11 +1094,11 @@ namespace Npgsql.SqlGenerators
         }
     }
 
-    internal class ConstantListExpression : VisitedExpression
+    internal class InListExpression : VisitedExpression
     {
-        private IEnumerable<ConstantExpression> _list;
+        private IEnumerable<VisitedExpression> _list;
 
-        public ConstantListExpression(IEnumerable<ConstantExpression> list)
+        public InListExpression(IEnumerable<VisitedExpression> list)
         {
             _list = list;
         }

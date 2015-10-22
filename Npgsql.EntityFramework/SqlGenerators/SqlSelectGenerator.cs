@@ -87,7 +87,7 @@ namespace Npgsql.SqlGenerators
         {
             // must provide a NULL of the correct type
             // this is necessary for certain types of union queries.
-            return new CastExpression(new LiteralExpression("NULL"), GetDbType(expression.ResultType.EdmType));
+            return new CastExpression(new LiteralExpression("NULL"), GetDbType(expression.ResultType));
         }
 
         public override void BuildCommand(DbCommand command)

@@ -533,6 +533,8 @@ namespace Npgsql
             {
                 sql.Append(" DEFAULT ");
                 AppendValue(column.DefaultValue, sql);
+                if (column.StoreType != null && column.StoreType.StartsWith("bit"))
+                    sql.Append("::").Append(column.StoreType);
             }
             else if (!string.IsNullOrWhiteSpace(column.DefaultValueSql))
             {
@@ -565,6 +567,8 @@ namespace Npgsql
             {
                 sql.Append(" DEFAULT ");
                 AppendValue(column.ClrDefaultValue, sql);
+                if (column.StoreType != null && column.StoreType.StartsWith("bit"))
+                    sql.Append("::").Append(column.StoreType);
             }
         }
 
@@ -617,7 +621,9 @@ namespace Npgsql
                         sql.Append("int2");
                     break;
                 case PrimitiveTypeKind.Int32:
-                    if (setSerial)
+                    if (column.StoreType != null && column.StoreType.StartsWith("bit"))
+                        sql.Append(column.StoreType);
+                    else if (setSerial)
                         sql.Append(column.IsIdentity ? "serial4" : "int4");
                     else
                         sql.Append("int4");

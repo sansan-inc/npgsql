@@ -150,6 +150,12 @@ namespace Npgsql
                     {
                         return TypeUsage.CreateBinaryTypeUsage(primitiveType, true, 8);
                     }
+                default:
+                    {
+                        if (storeTypeName.StartsWith("bit"))
+                            return TypeUsage.Create(primitiveType, storeType.Facets);
+                        break;
+                    }
                     //TypeUsage.CreateBinaryTypeUsage
                     //TypeUsage.CreateDateTimeTypeUsage
                     //TypeUsage.CreateDecimalTypeUsage
@@ -162,6 +168,11 @@ namespace Npgsql
         {
             if (edmType == null)
                 throw new ArgumentNullException("edmType");
+
+            if (edmType.IsBit())
+            {
+                return TypeUsage.Create(edmType.EdmType, edmType.Facets);
+            }
 
             PrimitiveType primitiveType = edmType.EdmType as PrimitiveType;
             if (primitiveType == null)
