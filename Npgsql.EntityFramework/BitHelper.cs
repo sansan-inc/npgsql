@@ -87,5 +87,29 @@ namespace Npgsql
 
             return Tuple.Create(left, right);
         }
+
+        public static DbCaseExpression AdjustBitContainedCase(DbCaseExpression expression)
+        {
+            var bitResultType = expression.Then.Select(x => x.ResultType).FirstOrDefault(x => x.IsBit());
+            if (bitResultType == null)
+            {
+                if (!expression.Else.ResultType.IsBit())
+                    return expression;
+
+                bitResultType = expression.Else.ResultType;
+            }
+
+            return DbExpressionBuilder.Case(
+                expression.When,
+                expression.Then.Select(x => x.CastToBitIfNotBit(bitResultType)),
+                expression.Else is DbNullExpression ? expression.Else : expression.Else.CastToBitIfNotBit(bitResultType));
+        }
+
+        private static DbExpression CastToBitIfNotBit(this DbExpression expression, TypeUsage bitType)
+        {
+            if (expression.ResultType.IsBit())
+                return expression;
+            return expression.CastTo(bitType);
+        }
     }
 }

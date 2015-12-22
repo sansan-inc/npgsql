@@ -797,6 +797,8 @@ namespace Npgsql.SqlGenerators
 
         public override VisitedExpression Visit(DbCaseExpression expression)
         {
+            expression = BitHelper.AdjustBitContainedCase(expression);
+
             LiteralExpression caseExpression = new LiteralExpression(" CASE ");
             for (int i = 0; i < expression.When.Count && i < expression.Then.Count; ++i)
             {
