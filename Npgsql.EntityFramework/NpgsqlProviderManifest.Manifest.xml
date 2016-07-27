@@ -85,6 +85,171 @@
       </FacetDescriptions>
     </Type>
     <Type Name="uuid" PrimitiveTypeKind="Guid"/>
+    <Type Name="bit" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="0" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(1)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="1" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(2)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="2" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(3)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="3" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(4)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="4" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(5)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="5" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(6)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="6" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(7)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="7" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(8)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="8" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(9)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="9" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(10)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="10" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(11)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="11" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(12)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="12" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(13)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="13" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(14)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="14" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(15)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="15" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(16)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="16" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(17)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="17" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(18)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="18" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(19)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="19" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(20)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="20" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(21)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="21" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(22)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="22" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(23)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="23" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(24)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="24" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(25)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="25" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(26)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="26" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(27)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="27" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(28)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="28" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(29)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="29" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(30)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="30" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(31)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="31" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
+    <Type Name="bit(32)" PrimitiveTypeKind="Int32">
+      <FacetDescriptions>
+        <Precision DefaultValue="32" Constant="true"/>
+      </FacetDescriptions>
+    </Type>
   </Types>
   <Functions>
     <Function Name="COUNT" Aggregate="true" BuiltIn="true">

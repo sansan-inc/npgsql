@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 #if ENTITIES6
 using System.Data.Entity.Core.Common.CommandTrees;
 using System.Data.Entity.Core.Metadata.Edm;
@@ -240,7 +241,7 @@ namespace Npgsql.SqlGenerators
                         {
                             TypeUsage type = ((CollectionType)exp.ResultType.EdmType).TypeUsage;
                             LiteralExpression result = new LiteralExpression("(SELECT ");
-                            result.Append(new CastExpression(new LiteralExpression("NULL"), GetDbType(type.EdmType)));
+                            result.Append(new CastExpression(new LiteralExpression("NULL"), GetDbType(type)));
                             result.Append(" LIMIT 0)");
                             n = new PendingProjectsNode(bindingName, new InputExpression(result, bindingName));
                         }
@@ -741,19 +742,25 @@ namespace Npgsql.SqlGenerators
                 case DbExpressionKind.NotEquals: comparisonOperator = Operator.NotEquals; break;
                 default: throw new NotSupportedException();
             }
-            return OperatorExpression.Build(comparisonOperator, expression.Left.Accept(this), expression.Right.Accept(this));
+            var bitAdjusted = BitHelper.AdjustBitComparison(expression);
+            return OperatorExpression.Build(comparisonOperator, bitAdjusted.Item1.Accept(this), bitAdjusted.Item2.Accept(this));
         }
 
         public override VisitedExpression Visit(DbCastExpression expression)
         {
-            return new CastExpression(expression.Argument.Accept(this), GetDbType(expression.ResultType.EdmType));
+            return new CastExpression(expression.Argument.Accept(this), GetDbType(expression.ResultType));
         }
 
-        protected string GetDbType(EdmType edmType)
+        protected string GetDbType(TypeUsage typeUsage)
         {
+            EdmType edmType = typeUsage.EdmType;
             PrimitiveType primitiveType = edmType as PrimitiveType;
             if (primitiveType == null)
                 throw new NotSupportedException();
+
+            if (typeUsage.IsBit())
+                return typeUsage.GetBitStoreTypeString();
+
             switch (primitiveType.PrimitiveTypeKind)
             {
                 case PrimitiveTypeKind.Boolean:
@@ -790,6 +797,8 @@ namespace Npgsql.SqlGenerators
 
         public override VisitedExpression Visit(DbCaseExpression expression)
         {
+            expression = BitHelper.AdjustBitContainedCase(expression);
+
             LiteralExpression caseExpression = new LiteralExpression(" CASE ");
             for (int i = 0; i < expression.When.Count && i < expression.Then.Count; ++i)
             {
@@ -905,7 +914,7 @@ namespace Npgsql.SqlGenerators
                     aggregateArg = functionAggregate.Arguments[0].Accept(this);
                 }
                 aggregate.AddArgument(aggregateArg);
-                return new CastExpression(aggregate, GetDbType(functionAggregate.ResultType.EdmType));
+                return new CastExpression(aggregate, GetDbType(functionAggregate.ResultType));
             }
             throw new NotSupportedException();
         }
@@ -946,7 +955,7 @@ namespace Npgsql.SqlGenerators
                         FunctionExpression length = new FunctionExpression("char_length");
                         System.Diagnostics.Debug.Assert(args.Count == 1);
                         length.AddArgument(args[0].Accept(this));
-                        return new CastExpression(length, GetDbType(resultType.EdmType));
+                        return new CastExpression(length, GetDbType(resultType));
                     case "LTrim":
                         return StringModifier("ltrim", args);
                     case "Replace":
@@ -1246,7 +1255,8 @@ namespace Npgsql.SqlGenerators
         private VisitedExpression BitwiseOperator(IList<DbExpression> args, Operator oper)
         {
             System.Diagnostics.Debug.Assert(args.Count == 2);
-            return OperatorExpression.Build(oper, args[0].Accept(this), args[1].Accept(this));
+            var bitAdjusted = BitHelper.AdjustBitwiseArguments(args[0], args[1]);
+            return OperatorExpression.Build(oper, bitAdjusted.Item1.Accept(this), bitAdjusted.Item2.Accept(this));
         }
 
 #if ENTITIES6
@@ -1254,13 +1264,17 @@ namespace Npgsql.SqlGenerators
         {
             VisitedExpression item = expression.Item.Accept(this);
 
-            ConstantExpression[] elements = new ConstantExpression[expression.List.Count];
+            VisitedExpression[] elements = new VisitedExpression[expression.List.Count];
+            var isBit = expression.Item.ResultType.IsBit();
             for (int i = 0; i < expression.List.Count; i++)
             {
-                elements[i] = (ConstantExpression)expression.List[i].Accept(this);
+                var element = expression.List[i];
+                if (isBit || expression.Item.ResultType.EdmType != element.ResultType.EdmType)
+                    element = element.CastTo(expression.Item.ResultType);
+                elements[i] = element.Accept(this);
             }
 
-            return OperatorExpression.Build(Operator.In, item, new ConstantListExpression(elements));
+            return OperatorExpression.Build(Operator.In, item, new InListExpression(elements));
         }
 
         public override VisitedExpression Visit(DbPropertyExpression expression)
