@@ -36,6 +36,7 @@ using System.Reflection;
 using System.Resources;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using NpgsqlTypes;
 
 namespace Npgsql
@@ -46,6 +47,27 @@ namespace Npgsql
     /// </summary>
     public sealed partial class NpgsqlCommand : DbCommand, ICloneable
     {
+        private static int _defaultBackendCommandTimeout = int.MinValue;
+
+        internal static int DefaultBackendCommandTimeout
+        {
+            get
+            {
+                if (_defaultBackendCommandTimeout != int.MinValue)
+                    return _defaultBackendCommandTimeout;
+
+                var s = System.Configuration.ConfigurationManager.AppSettings["Npgsql.BackendCommandTimeout"];
+
+                int backendCommandTimeout;
+                if (!int.TryParse(s, out backendCommandTimeout) || backendCommandTimeout <= 0)
+                    backendCommandTimeout = 20;
+
+                Interlocked.CompareExchange(ref _defaultBackendCommandTimeout, backendCommandTimeout, int.MinValue);
+
+                return _defaultBackendCommandTimeout;
+            }
+        }
+
         /// <summary>
         /// Internal query shortcut for use in cases where the number
         /// of affected rows is of no interest.
@@ -62,7 +84,7 @@ namespace Npgsql
             using (var blocker = connector.BlockNotificationThread())
             {
                 // Set statement timeout as needed.
-                connector.SetBackendCommandTimeout(20);
+                connector.SetBackendCommandTimeout(DefaultBackendCommandTimeout);
 
                 // Write the Query message to the wire.
                 connector.Query(query);
@@ -529,3 +551,4 @@ namespace Npgsql
         }
     }
 }
+
