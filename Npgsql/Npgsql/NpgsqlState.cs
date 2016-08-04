@@ -348,6 +348,28 @@ namespace Npgsql
 
         }
 
+        private const int DefaultExtraSecondsToWait = 5;
+        private static int _extraSecondsToWait = int.MinValue;
+
+        private static int ExtraSecondsToWait
+        {
+            get
+            {
+                if (_extraSecondsToWait != int.MinValue)
+                    return _extraSecondsToWait;
+
+                var s = System.Configuration.ConfigurationManager.AppSettings["Npgsql.ExtraSecondsToWait"];
+
+                int extraSecondsToWait;
+                if (!int.TryParse(s, out extraSecondsToWait) || extraSecondsToWait <= 0)
+                    extraSecondsToWait = DefaultExtraSecondsToWait;
+
+                Interlocked.CompareExchange(ref _extraSecondsToWait, extraSecondsToWait, int.MinValue);
+
+                return _extraSecondsToWait;
+            }
+        }
+
         /// <summary>
         /// Checks for context socket availability.
         /// Socket.Poll supports integer as microseconds parameter.
@@ -375,7 +397,7 @@ namespace Npgsql
             // The result is that a timeout could take 5 seconds too long to occur, but if everything
             // is healthy, that shouldn't happen. Not to mention, if the backend is unhealthy enough
             // to fail to send a timeout error, then a cancel request may malfunction anyway.
-            int secondsToWait = context.Mediator.BackendCommandTimeout + 5;
+            int secondsToWait = context.Mediator.BackendCommandTimeout + NpgsqlState.ExtraSecondsToWait;
 
             /* In order to bypass this limit, the availability of
              * the socket is checked in 2,147 seconds cycles
