@@ -166,9 +166,6 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Configuration)' == 'Debug-net45-EF6' Or '$(Configuration)' == 'Release-net45-EF6' ">
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="EntityFrameworkBasicTests.cs" />
