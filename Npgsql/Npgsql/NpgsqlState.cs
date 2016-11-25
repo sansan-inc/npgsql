@@ -348,7 +348,7 @@ namespace Npgsql
 
         }
 
-        private const int DefaultExtraSecondsToWait = 5;
+        private const int DefaultExtraSecondsToWait = 30;
         private static int _extraSecondsToWait = int.MinValue;
 
         private static int ExtraSecondsToWait

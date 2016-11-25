@@ -60,7 +60,7 @@ namespace Npgsql
 
                 int backendCommandTimeout;
                 if (!int.TryParse(s, out backendCommandTimeout) || backendCommandTimeout <= 0)
-                    backendCommandTimeout = 20;
+                    backendCommandTimeout = 300;
 
                 Interlocked.CompareExchange(ref _defaultBackendCommandTimeout, backendCommandTimeout, int.MinValue);
 
