@@ -327,7 +327,7 @@ namespace NpgsqlTypes
         private static IEnumerable<string> TokenEnumeration(string source)
         {
             bool inQuoted = false;
-            StringBuilder sb = new StringBuilder(source.Length);
+            StringBuilder sb = new StringBuilder();
             //We start of not in a quoted section, with an empty StringBuilder.
             //We iterate through each character. Generally we add that character
             //to the string builder, but in the case of special characters we
@@ -350,7 +350,7 @@ namespace NpgsqlTypes
                         else
                         {
                             yield return sb.ToString();
-                            sb = new StringBuilder(source.Length - idx);
+                            sb.Length = 0;
                         }
                         break;
                     case '\\': //next char is an escaped character, grab it, ignore the \ we are on now.
