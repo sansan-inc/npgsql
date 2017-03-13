@@ -39,6 +39,7 @@ using System.Threading;
 using Mono.Security.Protocol.Tls;
 using NpgsqlTypes;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Npgsql
 {
@@ -119,6 +120,11 @@ namespace Npgsql
 
         private Version _serverVersion;
 
+        /// <summary>
+        /// Whether the backend is an AWS Redshift instance
+        /// </summary>
+        private bool? _isRedshift;
+
         // Values for possible CancelRequest messages.
         private NpgsqlBackEndKeyData _backend_keydata;
 
@@ -137,6 +143,8 @@ namespace Npgsql
         private Boolean _supportsExtraFloatDigits = false;
 
         private Boolean _supportsSslRenegotiationLimit = false;
+
+        private Boolean _supportsLcMonetary = false;
 
         private Boolean _isInitialized;
 
@@ -243,6 +251,11 @@ namespace Npgsql
         internal byte[] Password
         {
             get { return settings.PasswordAsByteArray; }
+        }
+
+        internal String Krbsrvname
+        {
+            get { return settings.Krbsrvname; }
         }
 
         internal Boolean SSL
@@ -588,6 +601,23 @@ namespace Npgsql
         }
 
         /// <summary>
+        /// Whether the backend is an AWS Redshift instance
+        /// </summary>
+        internal bool IsRedshift
+        {
+            get
+            {
+                if (!_isRedshift.HasValue) {
+                    using (var cmd = new NpgsqlCommand("SELECT version()", this)) {
+                        var versionStr = (string)cmd.ExecuteScalar();
+                        _isRedshift = versionStr.ToLower().Contains("redshift");
+                    }
+                }
+                return _isRedshift.Value;
+            }
+        }
+
+        /// <summary>
         /// The physical connection socket to the backend.
         /// </summary>
         internal Socket Socket
@@ -706,6 +736,11 @@ namespace Npgsql
             get { return _supportsDiscard; }
         }
 
+        internal Boolean SupportsLcMonetary
+        {
+            get { return _supportsLcMonetary; }
+        }
+
         /// <summary>
         /// Options that control certain aspects of native to backend conversions that depend
         /// on backend version and status.
@@ -735,6 +770,7 @@ namespace Npgsql
                      (ServerVersion >= new Version(8, 1, 20) && ServerVersion < new Version(8, 2, 0)) ||
                      (ServerVersion >= new Version(8, 0, 24) && ServerVersion < new Version(8, 1, 0)) ||
                      (ServerVersion >= new Version(7, 4, 28) && ServerVersion < new Version(8, 0, 0)) );
+            this._supportsLcMonetary = (ServerVersion >= new Version(8, 1, 0));
 
             // Per the PG documentation, E string literal prefix support appeared in PG version 8.1.
             // Note that it is possible that support for this prefix will vanish in some future version
@@ -826,6 +862,11 @@ namespace Npgsql
             if (SupportsSslRenegotiationLimit)
             {
                 sbInitQueries.WriteLine("SET ssl_renegotiation_limit=0;");
+            }
+
+            if (SupportsLcMonetary)
+            {
+                sbInitQueries.WriteLine("SET lc_monetary='C';");
             }
 
             initQueries = sbInitQueries.ToString();
